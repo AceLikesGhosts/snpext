@@ -1,12 +1,31 @@
 import plugins from '~plugins-meta';
 import { PluginStatus, type IPlugin } from '@/plugins/api/types';
-import { INTERNAL_STORAGE_PREFIX } from './common';
+import { INTERNAL_STORAGE_PREFIX, STORAGE_SENDING_MESSAGES_TYPES } from './common';
 
 type MetaPlugin = IPlugin & {
     start?: boolean;
     stop?: boolean;
     patches?: boolean;
 } & Record<string, boolean>;
+
+function togglePluginStatus(
+    plugin: MetaPlugin,
+    pluginStatus: PluginStatus,
+    pluginStatusToggle: HTMLInputElement
+) {
+    let outputStatus: PluginStatus = PluginStatus.DISABLED;
+    if(pluginStatus === PluginStatus.ENABLED) outputStatus = PluginStatus.DISABLED;
+    else outputStatus = PluginStatus.ENABLED;
+
+    pluginStatusToggle.checked = outputStatus === PluginStatus.ENABLED ? true : false;
+    window.postMessage({
+        type: STORAGE_SENDING_MESSAGES_TYPES.REMOTE_PLUGIN_STATUS_UPDATE,
+        data: {
+            pluginName: plugin.name,
+            status: outputStatus
+        }
+    });
+}
 
 async function createPluginDetails(plugin: MetaPlugin) {
     const pluginDiv = document.createElement('li');
@@ -27,10 +46,12 @@ async function createPluginDetails(plugin: MetaPlugin) {
         pluginStatusToggle.checked = true;
     } else if(pluginStatus === PluginStatus.DISABLED) {
         pluginStatusToggle.checked = false;
-    } else {
+    } else if(pluginStatus === PluginStatus.CRASHED) {
         pluginStatusToggle.checked = false;
         pluginStatusToggle.disabled = true;
     }
+
+    pluginStatusToggle.addEventListener('click', () => togglePluginStatus(plugin, pluginStatus, pluginStatusToggle));
 
     const pluginDescription = document.createElement('p');
     pluginDescription.innerText = plugin.description ?? 'No description.';
