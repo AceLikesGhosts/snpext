@@ -1,7 +1,7 @@
+import type { LazyCallback, WebpackFilter, WebpackModule, WebpackSearchOptions } from './types';
 import { Filters } from './Filters';
 import { cache } from './patching';
 import { moduleListeners } from './patching/listeners';
-import type { LazyCallback, WebpackFilter, WebpackModule, WebpackSearchOptions } from './types';
 
 export function getById<T>(id: string | number, options?: WebpackSearchOptions): T;
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw: true; }): WebpackModule;
@@ -30,6 +30,35 @@ export function getByStrings(strings: string[], options: WebpackSearchOptions = 
         options
     );
 }
+
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions): T;
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw: true; }): WebpackModule;
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all?: true; withKey?: false; }): T;
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T;
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: false; }): T[];
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T];
+export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: false; withKey: true; }): [string, T][];
+export function getByKeys(keys: string[], options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+    return getModule(
+        Filters.byKeys(...keys),
+        options
+    );
+}
+
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions): T;
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw: true; }): WebpackModule;
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all?: true; withKey?: false; }): T;
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T;
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: false; }): T[];
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T];
+export function getByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: false; withKey: true; }): [string, T][];
+export function getByRegex(regex: RegExp, options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+    return getModule(
+        Filters.byRegex(regex),
+        options
+    );
+}
+
 
 export function getModule<T>(filter: WebpackFilter, options?: WebpackSearchOptions): T;
 export function getModule<T>(filter: WebpackFilter, options?: WebpackSearchOptions & { raw: true; }): WebpackModule;

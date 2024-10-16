@@ -30,5 +30,16 @@ export const Filters = {
 
             return true;
         };
+    },
+    byRegex: (regex: RegExp) => {
+        return (exports) => {
+            const stringified = exports?.toString() ?? Object.prototype.toString.apply(exports);
+
+            if(regex.test(stringified)) {
+                return true;
+            }
+
+            return false;
+        };
     }
 } satisfies Record<PropertyKey, (...args: any[]) => WebpackFilter>;
