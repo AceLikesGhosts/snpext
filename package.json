@@ -1,0 +1,21 @@
+{
+  "name": "snpext",
+  "version": "0.0.0",
+  "module": "src/index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/chrome": "^0.0.270",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.23.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "description": "hii",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "idb": "^8.0.0"
+  }
+}
