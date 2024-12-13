@@ -116,6 +116,8 @@ export function getModule(filter: WebpackFilter, options: WebpackSearchOptions =
             continue;
         }
 
+        filter = Filters.wrap(filter);
+
         if(filter(mod.exports, mod, mod.id)) {
             if(options.raw) results.push(mod);
             else if(options.withKey) results.push([key, mod]);

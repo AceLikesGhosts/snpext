@@ -12,6 +12,16 @@ export const Filters = {
             return true;
         };
     },
+    wrap: (filter: WebpackFilter) => {
+        return (exports, mod, id) => {
+            try {
+                return filter(exports, mod, id);
+            } catch(err) {
+                console.error('something went wrong!', err);
+                return false;
+            }
+        }
+    },
     byKeys: (...keys: string[]) => {
         return (exports) => {
             if(typeof exports !== 'object') {
@@ -33,7 +43,7 @@ export const Filters = {
     byStrings: (strings: string[]) => {
         return (exports) => {
             const stringified = exports?.$original?.toString() ?? exports?.toString() ?? Object.prototype.toString.apply(exports);
-            
+
             for(const str of strings) {
                 if(!stringified.includes(str)) {
                     return false;

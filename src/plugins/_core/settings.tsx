@@ -187,6 +187,13 @@ export default definePlugin({
     settingsButton: ({ original }: { original: React.FunctionComponent; }) => {
         console.log('orig', original);
 
+        if(!SettingsContext) {
+            console.log('settingsButton no SettingsContext')
+            return snpext.webpack.common.React.createElement(original, {}, []);
+        }
+
+
+        console.log('settingContext', SettingsContext);
         const settingsContext = React.useContext(SettingsContext);
         console.log('settingsContext~settingsButton', settingsContext.settingsShown);
 
@@ -245,6 +252,13 @@ export default definePlugin({
     },
 
     intermediateSettingsComponent: ({ original, args }: { original: React.FunctionComponent; args: Record<PropertyKey, unknown> | undefined, }) => {
+        console.log('intermediateSettingsComponent called');
+
+        if(!SettingsContext) {
+            console.log('intermediateSettingsComponent failed to find settings context');
+            return snpext.webpack.common.React.createElement(original, args ?? {}, []);
+        }
+
         const {
             settingsShown,
             setSettingsShown
