@@ -6,3 +6,7 @@ gif menu (like discord)
 better autocorrect
 custom css
 audio messages
+
+invisible typing
+invisible open
+platform spoofer
