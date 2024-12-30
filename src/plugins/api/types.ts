@@ -1,11 +1,11 @@
-import type { Authors } from '@/utils/authors';
+import type { IAuthors } from '@/utils/authors';
 import type { PlaintextPatches } from '@/webpack/types';
 
 export type IPlugin = {
     name: string;
     version: string;
     description?: string;
-    authors?: Authors[] 
+    authors?: IAuthors[] 
 
     /**
      * If the plugin is required for
