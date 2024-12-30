@@ -1,4 +1,4 @@
-import ReactiveStore, { type StoreListener } from './reactiveStore/store';
+import ReactiveStore from './reactiveStore/store';
 
 export const SETTINGS_STORE = new ReactiveStore<
     Record<PropertyKey, unknown>
