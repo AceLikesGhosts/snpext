@@ -382,6 +382,7 @@ export default definePlugin({
             );
         };
 
+        console.log('patching', obj, key);
         patcher.after(obj, key, (args, result, ctx) => {
             logger.log('patched zne called', args, result, ctx);
             return (
