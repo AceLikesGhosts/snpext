@@ -1,4 +1,5 @@
 import { Patcher } from './utils/patcher';
+import { set } from './utils/storage';
 
 Object.freeze(console); // FUCK YOU SNAPCHAT!
 
@@ -13,19 +14,19 @@ Object.freeze(console); // FUCK YOU SNAPCHAT!
 // for the settings core plugin
 new Patcher('internal')
     .instead(Object, 'defineProperty', (
-        [obj, prop, descriptor],
-        original
+        [object, propertyKey, descriptor],
+        original,
+        context
     ) => {
         if(descriptor.get && !descriptor.set) {
-            descriptor.configurable = true;
+            const value = {} as { current: any; };
 
-            let iv = descriptor.get.bind(obj);
-
-            descriptor.get = iv;
-            descriptor.set = (v) => iv = v;
+            const originalGetter = descriptor.get;
+            descriptor.get = () => value.current || originalGetter.bind(context).call(object);
+            descriptor.set = (v) => value.current = v;
         }
 
-        return original(obj, prop, descriptor);
+        return original(object, propertyKey, descriptor);
     });
 
 export * as storage from './utils/storage';
