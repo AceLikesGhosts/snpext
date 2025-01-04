@@ -18,7 +18,13 @@ const getCircularReplacer = () => {
 };
 export function stringify(thing: any) {
     if(typeof thing === 'function') {
-        return Function.prototype.toString.call(thing);
+        // using function prototype to string results in
+        // skipping over the `toString` function, which will
+        // result a patched function not being able to be found
+        // with the same query
+        // return Function.prototype.toString.call(thing);
+
+        return thing.toString();
     }
 
     if(typeof thing === 'object') {
