@@ -1,12 +1,12 @@
 plugin settings page
 
-save images without notification
-emoji menu w/ apple emojis
-gif menu (like discord)
-better autocorrect
-custom css
-audio messages
+[ ] save images without notification
+[ ] emoji menu w/ apple emojis
+[ ] gif menu (like discord)
+[ ] better autocorrect
+[ ] custom css
+[ ] audio messages
 
-invisible typing
-invisible open
-platform spoofer
+[x] invisible typing
+[ ] invisible open
+[ ] platform spoofer
