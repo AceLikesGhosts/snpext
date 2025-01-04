@@ -1,3 +1,4 @@
+import { stringify } from '@/utils/stringify';
 import type { WebpackFilter } from './types';
 
 export const Filters = {
@@ -20,7 +21,7 @@ export const Filters = {
                 console.error('something went wrong!', err);
                 return false;
             }
-        }
+        };
     },
     byKeys: (...keys: string[]) => {
         return (exports) => {
@@ -42,7 +43,7 @@ export const Filters = {
     },
     byStrings: (strings: string[]) => {
         return (exports) => {
-            const stringified = exports?.$original?.toString() ?? exports?.toString() ?? Object.prototype.toString.apply(exports);
+            const stringified = stringify(exports)
 
             for(const str of strings) {
                 if(!stringified.includes(str)) {
@@ -59,7 +60,7 @@ export const Filters = {
                 return false;
             }
 
-            const stringified = (exports as any)?.$original?.toString() ?? exports?.toString() ?? Object.prototype.toString.apply(exports);
+            const stringified = stringify(exports)
             return matchers.every(matcher =>
                 typeof matcher === 'string'
                     ? stringified.includes(matcher)
@@ -69,7 +70,7 @@ export const Filters = {
     },
     byRegex: (regex: RegExp) => {
         return (exports) => {
-            const stringified = exports?.$original?.toString() ?? exports?.toString() ?? Object.prototype.toString.apply(exports);
+            const stringified = stringify(exports)
 
             if(regex.test(stringified)) {
                 return true;
