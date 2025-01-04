@@ -3,6 +3,9 @@ import { Filters } from './Filters';
 import { cache } from './patching';
 import { moduleListeners } from './patching/listeners';
 import wait from '@/utils/wait';
+import Logger from '@/utils/logger';
+
+const logger = Logger.new('webpack', 'searcher');
 
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
@@ -13,10 +16,16 @@ export function getById<T>(id: string | number, options?: WebpackSearchOptions &
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw: true; all?: false; withKey: true; }): [string, WebpackModule];
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw: true; all: true; withKey: true; }): [string, WebpackModule][];
 export function getById(id: string | number, options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
-    return getModule(
+    const result = getModule(
         Filters.byId(id),
         options
     );
+
+    if(!result && typeof cache[id] !== 'undefined') {
+        logger.warn(`Failed to locate module id ${id} via \`#getModule\` but found via \`.cache\`, if you see this message please report it!`);
+    }
+
+    return result;
 }
 
 export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
@@ -180,7 +189,7 @@ export async function getModuleLazy(filter: WebpackFilter, options: WebpackSearc
         return existing;
     }
 
-    const [waitFor, resolver] = wait<any>()
+    const [waitFor, resolver] = wait<any>();
     const wrappedCb = (result: any) => resolver(result);
 
     moduleListeners.set(filter, wrappedCb);
