@@ -1,9 +1,9 @@
-import type { LazyCallback, WebpackFilter, WebpackModule, WebpackSearchOptions } from './types';
+import type { WebpackSearchOptions, WebpackModule, LazyCallback, WebpackFilter } from './types';
+import { moduleListeners } from './patching/listeners';
 import { Filters } from './Filters';
 import { cache } from './patching';
-import { moduleListeners } from './patching/listeners';
-import wait from '@/utils/wait';
 import Logger from '@/utils/logger';
+import wait from '@/utils/wait';
 
 const logger = Logger.new('webpack', 'searcher');
 
@@ -22,69 +22,87 @@ export function getById(id: string | number, options: WebpackSearchOptions = { r
     );
 
     if(!result && typeof cache[id] !== 'undefined') {
-        logger.warn(`Failed to locate module id ${id} via \`#getModule\` but found via \`.cache\`, if you see this message please report it!`);
+        logger.warn(`Failed to locate module id ${ id } via \`#getModule\` but found via \`.cache\`, if you see this message please report it!`);
     }
 
     return result;
 }
 
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
-export function getByStrings(strings: string[], options?: WebpackSearchOptions & { raw: true; withKey: false; all?: false; }): WebpackModule;
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw: true; all: true; withKey?: false; }): WebpackModule[];
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }): [string, T];
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T][];
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw: true; all?: false; withKey: true; }): [string, WebpackModule];
-export function getByStrings<T>(strings: string[], options?: WebpackSearchOptions & { raw: true; all: true; withKey: true; }): [string, WebpackModule][];
-export function getByStrings(strings: string[], options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+
+type WithOptions<T, B> = [...T[], B] | T[];
+function seperateOptionsAndValues<T, B>(...values: WithOptions<T, B>): [values: T[], options: B | null] {
+    const optionIdx = values.findIndex((v) => typeof v === 'object');
+    if(optionIdx !== -1) {
+        const options = values[optionIdx];
+        values.splice(optionIdx, 1)
+        return [values, options] as [values: T[], options: B];
+    }
+
+    return [values, null] as [values: T[], options: null];
+}
+
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }>): T;
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }>): T[];
+export function getByStrings(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; withKey: false; all?: false; }>): WebpackModule;
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all: true; withKey?: false; }>): WebpackModule[];
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }>): [string, T];
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all: true; withKey: true; }>): [string, T][];
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all?: false; withKey: true; }>): [string, WebpackModule];
+export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all: true; withKey: true; }>): [string, WebpackModule][];
+export function getByStrings(...strings: WithOptions<string, WebpackSearchOptions>): any {
+    const [values, options] = seperateOptionsAndValues(...strings);
+    console.log(values, options)
     return getModule(
-        Filters.byStrings(strings),
-        options
+        Filters.byStrings(...values),
+        options || {}
     );
 }
 
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
-export function getByKeys(keys: string[], options?: WebpackSearchOptions & { raw: true; withKey: false; all?: false; }): WebpackModule;
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw: true; all: true; withKey?: false; }): WebpackModule[];
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }): [string, T];
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T][];
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw: true; all?: false; withKey: true; }): [string, WebpackModule];
-export function getByKeys<T>(keys: string[], options?: WebpackSearchOptions & { raw: true; all: true; withKey: true; }): [string, WebpackModule][];
-export function getByKeys(keys: string[], options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }>): T;
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }>): T[];
+export function getByRegex(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw: true; withKey: false; all?: false; }>): WebpackModule;
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw: true; all: true; withKey?: false; }>): WebpackModule[];
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }>): [string, T];
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw?: false; all: true; withKey: true; }>): [string, T][];
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw: true; all?: false; withKey: true; }>): [string, WebpackModule];
+export function getByRegex<T>(...strings: WithOptions<RegExp, WebpackSearchOptions & { raw: true; all: true; withKey: true; }>): [string, WebpackModule][];
+export function getByRegex(...strings: WithOptions<RegExp, WebpackSearchOptions>): any {
+    const [values, options] = seperateOptionsAndValues(...strings);
     return getModule(
-        Filters.byKeys(...keys),
-        options
+        Filters.byRegex(...values),
+        options || {}
     );
 }
 
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
-export function geyByRegex(regex: RegExp, options?: WebpackSearchOptions & { raw: true; withKey: false; all?: false; }): WebpackModule;
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw: true; all: true; withKey?: false; }): WebpackModule[];
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }): [string, T];
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T][];
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw: true; all?: false; withKey: true; }): [string, WebpackModule];
-export function geyByRegex<T>(regex: RegExp, options?: WebpackSearchOptions & { raw: true; all: true; withKey: true; }): [string, WebpackModule][];
-export function geyByRegex(regex: RegExp, options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }>): T;
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }>): T[];
+export function getBySource(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw: true; withKey: false; all?: false; }>): WebpackModule;
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw: true; all: true; withKey?: false; }>): WebpackModule[];
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }>): [string, T];
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw?: false; all: true; withKey: true; }>): [string, T][];
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw: true; all?: false; withKey: true; }>): [string, WebpackModule];
+export function getBySource<T>(...strings: WithOptions<string | RegExp, WebpackSearchOptions & { raw: true; all: true; withKey: true; }>): [string, WebpackModule][];
+export function getBySource(...strings: WithOptions<string | RegExp, WebpackSearchOptions>): any {
+    const [values, options] = seperateOptionsAndValues(...strings);
     return getModule(
-        Filters.byRegex(regex),
-        options
+        Filters.bySource(...values),
+        options || {}
     );
 }
 
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
-export function getBySource(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw: true; withKey: false; all?: false; }): WebpackModule;
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw: true; all: true; withKey?: false; }): WebpackModule[];
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }): [string, T];
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw?: false; all: true; withKey: true; }): [string, T][];
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw: true; all?: false; withKey: true; }): [string, WebpackModule];
-export function getBySource<T>(matchers: string[] | RegExp[], options?: WebpackSearchOptions & { raw: true; all: true; withKey: true; }): [string, WebpackModule][];
-export function getBySource(matchers: string[] | RegExp[], options: WebpackSearchOptions = { raw: false, all: false, withKey: false }): any {
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }>): T;
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }>): T[];
+export function getByKeys(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; withKey: false; all?: false; }>): WebpackModule;
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all: true; withKey?: false; }>): WebpackModule[];
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all?: false; withKey: true; }>): [string, T];
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw?: false; all: true; withKey: true; }>): [string, T][];
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all?: false; withKey: true; }>): [string, WebpackModule];
+export function getByKeys<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all: true; withKey: true; }>): [string, WebpackModule][];
+export function getByKeys(...strings: WithOptions<string, WebpackSearchOptions>): any {
+    const [values, options] = seperateOptionsAndValues(...strings);
     return getModule(
-        Filters.bySource(matchers),
-        options
+        Filters.byKeys(...values),
+        options || {}
     );
 }
 

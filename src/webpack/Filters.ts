@@ -41,9 +41,9 @@ export const Filters = {
     byId: (id: string | number) => {
         return (_, __, modId) => modId === id;
     },
-    byStrings: (strings: string[]) => {
+    byStrings: (...strings: string[]) => {
         return (exports) => {
-            const stringified = stringify(exports)
+            const stringified = stringify(exports);
 
             for(const str of strings) {
                 if(!stringified.includes(str)) {
@@ -54,13 +54,13 @@ export const Filters = {
             return true;
         };
     },
-    bySource: (matchers: string[] | RegExp[]) => {
+    bySource: (...matchers: (string | RegExp)[]) => {
         return (exports) => {
             if(typeof exports !== 'function') {
                 return false;
             }
 
-            const stringified = stringify(exports)
+            const stringified = stringify(exports);
             return matchers.every(matcher =>
                 typeof matcher === 'string'
                     ? stringified.includes(matcher)
@@ -68,15 +68,10 @@ export const Filters = {
             );
         };
     },
-    byRegex: (regex: RegExp) => {
+    byRegex: (...regex: RegExp[]) => {
         return (exports) => {
-            const stringified = stringify(exports)
-
-            if(regex.test(stringified)) {
-                return true;
-            }
-
-            return false;
+            const stringified = stringify(exports);
+            return regex.every(matcher => matcher.test(stringified));
         };
     }
 } satisfies Record<PropertyKey, (...args: any[]) => WebpackFilter>;
