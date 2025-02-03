@@ -9,7 +9,7 @@ type Platforms = {
     OS_WEB: 3;
 };
 
-const platformEnum = getByKeys<Platforms>(['OS_ANDROID', 'OS_IOS', 'OS_WEB']);
+const platformEnum = getByKeys<Platforms>('OS_ANDROID', 'OS_IOS', 'OS_WEB');
 
 const settings = makePluginSettings({
 

@@ -314,7 +314,7 @@ export default definePlugin({
     },
 
     start: () => {
-        const [key, obj] = getByStrings<Record<string, () => React.ReactNode>>(['path:"coming-soon"'], { withKey: true });
+        const [key, obj] = getByStrings<Record<string, () => React.ReactNode>>('path:"coming-soon"', { withKey: true });
         if(!key || !obj) {
             throw 'missing key or obj of frontend module (settings.tsx)';
         }

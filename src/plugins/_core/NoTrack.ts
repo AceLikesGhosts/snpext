@@ -80,9 +80,7 @@ export default definePlugin({
         }
     ],
     start() {
-        activityMod = getByKeys<AnalyticsModule>(
-            ['increment', 'metricCollector', 'activityDetector'],
-        );
+        activityMod = getByKeys<AnalyticsModule>('increment', 'metricCollector', 'activityDetector',);
 
         if(!activityMod) {
             throw new Error('NoTrack ~ Failed to find AnalyticsModule');
