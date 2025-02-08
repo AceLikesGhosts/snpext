@@ -51,7 +51,6 @@ export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOpt
 export function getByStrings<T>(...strings: WithOptions<string, WebpackSearchOptions & { raw: true; all: true; withKey: true; }>): [string, WebpackModule][];
 export function getByStrings(...strings: WithOptions<string, WebpackSearchOptions>): any {
     const [values, options] = seperateOptionsAndValues(...strings);
-    console.log(values, options)
     return getModule(
         Filters.byStrings(...values),
         options || {}
