@@ -8,6 +8,8 @@ declare global {
     }
 
     export const IS_DEV: boolean;
+    export const LFOR: string;
+
     export const snpext: {
         webpack: {
             common: typeof import('./webpack/common')

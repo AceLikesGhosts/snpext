@@ -7,8 +7,14 @@ export const LOGGER_COLOURS = {
     debug: 'color: #ADD8E6;'
 };
 
+const LOGGING_ENABLED_FOR = LFOR.split(/\s|,|,\s/);
+
 export default class Logger {
-    public constructor(private readonly prefix: string = 'unknown') { }
+    public constructor(private readonly prefix: string = 'unknown') {
+        if(!LOGGING_ENABLED_FOR.includes('*') && !LOGGING_ENABLED_FOR.includes(prefix)) {
+            this.verbose = () => void 0;
+        }
+    }
 
     public static new(...prefixes: string[]) {
         return new Logger(prefixes.join('~'));

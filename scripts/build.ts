@@ -48,7 +48,6 @@ const options = {
     format: 'iife',
     define: {
         IS_DEV: `${ isDev }`,
-        IS_VERBOSE: `${ isVerbose }`,
         LFOR: loggingEnabledFor
     },
 
