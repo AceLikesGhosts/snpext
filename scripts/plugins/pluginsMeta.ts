@@ -2,7 +2,7 @@ import type { Plugin } from 'esbuild';
 import { stat } from 'fs/promises';
 import { readdir } from 'fs/promises';
 import { join, relative } from 'path';
-import { injectedEntryPoint } from './build';
+import { injectedEntryPoint } from '../build';
 import ts from 'typescript';
 import { readFile } from 'fs/promises';
 

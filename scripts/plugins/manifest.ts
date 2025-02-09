@@ -1,5 +1,5 @@
 import path from 'path';
-import { name as pkgName, version as pkgVersion, description as pkgDescription } from '../package.json';
+import { name as pkgName, version as pkgVersion, description as pkgDescription } from '../../package.json';
 import fs from 'fs/promises';
 import type { Plugin } from 'esbuild';
 import { mkdir } from 'fs/promises';
