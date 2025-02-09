@@ -18,6 +18,11 @@ const {
     }
 } = args;
 
+let loggingEnabledFor: string | undefined = lfor;
+if(isDev && loggingEnabledFor === undefined) {
+    loggingEnabledFor = '*';
+}
+
 export const injectedEntryPoint = path.join(__dirname, '..', 'src', 'entry.ts');
 
 export function getLastString(path: string): string {
@@ -33,7 +38,7 @@ const banner = `
  * IS_DEV: ${ isDev }
  * IS_VERBOSE: ${ isVerbose }
  * IS_WATCH: ${ isWatch }
- * LFOR: ${ lfor }
+ * LFOR: ${ loggingEnabledFor }
  */
 `.trim();
 
@@ -44,7 +49,7 @@ const options = {
     define: {
         IS_DEV: `${ isDev }`,
         IS_VERBOSE: `${ isVerbose }`,
-        LFOR: lfor
+        LFOR: loggingEnabledFor
     },
 
     banner: {
