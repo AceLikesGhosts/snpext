@@ -13,7 +13,8 @@ bun install --frozen-lockfile
 # WATCH   - watches over every file in src/ and rebuilds upon change
 # DEV     - minification setting (true = unminified, false = minified)
 # VERBOSE - if the logging should verbose
-WATCH=false DEV=false VERBOSE=true ./scripts/build.ts
+# LFOR    - what plugins to enable verbose logging for, either a space or comma delimited string or `*` for all; defaults to none if `DEV` is false, and defaults to `*` if `DEV` is true
+bun ./scripts/build.ts --watch --dev --verbose
 ```
 
 ### Extension Installation
