@@ -2,23 +2,21 @@ if(typeof Bun === 'undefined') {
     throw 'This project requires Bun (https://bun.sh) for building.';
 }
 
-declare module 'bun' {
-    interface Env {
-        DEV: string;
-        WATCH: string;
-        VERBOSE: string;
-    }
-}
-
 import { name as pkgName, version as pkgVersion } from '../package.json';
 import esbuild from 'esbuild';
 import path from 'path';
-import manifest from './manifest';
-import plugins from './plugins';
+import manifest from './plugins/manifest';
+import plugins from './plugins/plugins';
+import { args } from './args';
 
-const isWatch = Boolean(process.env.WATCH) ?? false;
-const isDev = (Boolean(process.env.DEV) || isWatch) ?? false;
-const isVerbose = Boolean(process.env.VERBOSE) ?? true;
+const {
+    values: {
+        verbose: isVerbose,
+        watch: isWatch,
+        dev: isDev,
+        lfor
+    }
+} = args;
 
 export const injectedEntryPoint = path.join(__dirname, '..', 'src', 'entry.ts');
 
@@ -35,6 +33,7 @@ const banner = `
  * IS_DEV: ${ isDev }
  * IS_VERBOSE: ${ isVerbose }
  * IS_WATCH: ${ isWatch }
+ * LFOR: ${ lfor }
  */
 `.trim();
 
@@ -45,6 +44,7 @@ const options = {
     define: {
         IS_DEV: `${ isDev }`,
         IS_VERBOSE: `${ isVerbose }`,
+        LFOR: lfor
     },
 
     banner: {
