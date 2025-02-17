@@ -1,9 +1,11 @@
+import { Authors } from '@/utils/authors';
 import definePlugin from '@/utils/plugin';
 
 export default definePlugin({
     name: 'RemoveBlockers',
     version: '1.0.0',
     isRequired: true,
+    authors: [Authors.ACE],
     patches: [
         {
             find: /.\),{shouldObscureUserContent(.*?)}/,

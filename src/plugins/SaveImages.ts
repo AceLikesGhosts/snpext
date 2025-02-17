@@ -1,4 +1,5 @@
 import { RemoteMediaType, type Message } from '@/structures/Message';
+import { Authors } from '@/utils/authors';
 import Logger from '@/utils/logger';
 import definePlugin from '@/utils/plugin';
 import { getByKeys } from '@/webpack';
@@ -80,6 +81,7 @@ export default definePlugin({
     name: 'SaveImages',
     description: 'Allows for downloading images which are in the chat.',
     version: '1.0.0',
+    authors: [Authors.ACE],
     chatSaveComponent: ({ original, setHoveredActionLabel, message }: {
         original: React.FunctionComponent<{
             dataTestId?: string;
