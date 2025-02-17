@@ -8,4 +8,4 @@ export const Authors = {
         shortName: 'ace',
         githubUrl: 'https://github.com/acelikesghosts'
     }
-} as Record<string, IAuthors>;
+} as const;
