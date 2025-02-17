@@ -102,7 +102,7 @@ function SettingsPage() {
                 <h1>Plugins</h1>
 
                 <ul style={{ listStyle: 'none' }}>
-                    {Object.values(sortedNonRequiredPlugins).map((plugin) => <li>
+                    {Object.values(sortedNonRequiredPlugins).map((plugin) => <li className='settings-item'>
                         <PluginCard plugin={plugin} appendReloadReason={appendReloadReason} />
                     </li>)}
                 </ul>
@@ -112,7 +112,7 @@ function SettingsPage() {
                 <h2>Required Plugins</h2>
 
                 <ul style={{ listStyle: 'none' }}>
-                    {Object.values(sortedRequiredPlugins).map((plugin) => <li>
+                    {Object.values(sortedRequiredPlugins).map((plugin) => <li className='settings-item'>
                         <PluginCard plugin={plugin} appendReloadReason={appendReloadReason} />
                     </li>)}
                 </ul>
@@ -176,7 +176,7 @@ function PluginCard({
                 />
             </div>
 
-            <div>
+            <div className='settings-flex-row'>
                 <button
                     type='button'
                     style={{
@@ -209,18 +209,19 @@ function PluginCard({
                         </path>
                     </svg>
                 </button>
+
+                <div>
+                    {plugin.authors && plugin.authors.length > 0
+                        // && <span>by {plugin.authors?.map((authors) => authors).join(', ')}</span>
+                        && <span>by {plugin.authors.map((author) => <a href={author.githubUrl} target='_blank'>{author.shortName}</a>)}</span>
+                    }
+                </div>
             </div>
 
             <div>
                 {plugin.description}
             </div>
 
-            <div>
-                {plugin.authors && plugin.authors.length > 0
-                    // && <span>by {plugin.authors?.map((authors) => authors).join(', ')}</span>
-                    && <span>by {plugin.authors.map((author) => <a href={author.githubUrl} target='_blank'>{author.shortName}</a>)}</span>
-                }
-            </div>
         </div>
     );
 }
@@ -335,6 +336,10 @@ export default definePlugin({
             width: 100%;
 
             // border-left: solid #2e2d2d 2px;
+        }
+
+        .settings-item {
+            width: 450px;
         }
 
         .settings-flex-no-center {
