@@ -25,7 +25,7 @@ const {
 //     loggingEnabledFor = `[${ loggingEnabledFor?.split(/\s|,|,\s/) }]`;
 // }
 
-const loggingEnabledFor = lfor?.split(/s|,|,\s/);
+const loggingEnabledFor = lfor?.split(/\s|,/);
 
 export const injectedEntryPoint = path.join(__dirname, '..', 'src', 'entry.ts');
 
@@ -41,15 +41,18 @@ const banner = `
  */
 `.trim();
 
+const LFOR: Record<string, boolean> = {};
+for(const item of loggingEnabledFor || []) {
+    LFOR[item] = true;
+}
+
 const options = {
     target: ['chrome89', 'firefox89', 'safari15', 'edge89'],
     globalName: pkgName,
     format: 'iife',
     define: {
         IS_DEV: `${ isDev }`,
-        LFOR: `{
-        ${ loggingEnabledFor?.map((item) => `"${ item }": true,`) }
-        }`
+        LFOR: JSON.stringify(LFOR)
     },
 
     banner: {
