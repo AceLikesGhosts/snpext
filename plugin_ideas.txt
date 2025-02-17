@@ -1,6 +1,6 @@
 plugin settings page
 
-[ ] save images without notification
+[x] save images without notification
 [ ] emoji menu w/ apple emojis
 [ ] gif menu (like discord)
 [ ] better autocorrect
