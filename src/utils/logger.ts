@@ -7,11 +7,6 @@ export const LOGGER_COLOURS = {
     debug: 'color: #ADD8E6;'
 };
 
-console.log(
-    'lfor',
-    LFOR
-);
-
 export default class Logger {
     public constructor(private readonly prefix: string = 'unknown') {
         if(
