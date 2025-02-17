@@ -18,17 +18,16 @@ const {
     }
 } = args;
 
-let loggingEnabledFor: string | undefined = lfor;
-if(isDev && loggingEnabledFor === undefined) {
-    loggingEnabledFor = '*';
-}
+// let loggingEnabledFor: string | undefined = lfor;
+// if(isDev && loggingEnabledFor === undefined) {
+//     loggingEnabledFor = '[*]';
+// } else if(loggingEnabledFor !== undefined) {
+//     loggingEnabledFor = `[${ loggingEnabledFor?.split(/\s|,|,\s/) }]`;
+// }
+
+const loggingEnabledFor = lfor?.split(/s|,|,\s/);
 
 export const injectedEntryPoint = path.join(__dirname, '..', 'src', 'entry.ts');
-
-export function getLastString(path: string): string {
-    const parts = path.split('/');
-    return parts[parts.length - 1];
-}
 
 const banner = `
 /**
@@ -48,7 +47,9 @@ const options = {
     format: 'iife',
     define: {
         IS_DEV: `${ isDev }`,
-        LFOR: loggingEnabledFor
+        LFOR: `{
+        ${ loggingEnabledFor?.map((item) => `"${ item }": true,`) }
+        }`
     },
 
     banner: {

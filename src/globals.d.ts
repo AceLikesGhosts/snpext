@@ -8,7 +8,7 @@ declare global {
     }
 
     export const IS_DEV: boolean;
-    export const LFOR: string;
+    export const LFOR: Record<string, boolean>;
 
     export const snpext: {
         webpack: {

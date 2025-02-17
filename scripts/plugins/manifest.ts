@@ -134,7 +134,7 @@ export async function createIfNotEqual(
     name: string,
     content: string
 ) {
-    const file = path.join(__dirname, '..', 'dist', name);
+    const file = path.join(__dirname, '..', '..', 'dist', name);
 
     if(await fileSame(file, content)) {
         return;
@@ -150,7 +150,7 @@ export default {
     setup(build) {
         build.onStart(async () => {
             try {
-                await mkdir(path.join(__dirname, '..', 'dist'));
+                await mkdir(path.join(__dirname, '..', '..', 'dist'));
             } catch(err) {
                 // don't care
             }
