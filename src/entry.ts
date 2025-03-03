@@ -1,7 +1,4 @@
 import { Patcher } from './utils/patcher/patcher';
-import { set } from './utils/storage';
-
-Object.freeze(console); // FUCK YOU SNAPCHAT!
 
 // this is a workaround to the fact
 // that webpack exports elements using `defineProperty`
@@ -14,19 +11,21 @@ Object.freeze(console); // FUCK YOU SNAPCHAT!
 // for the settings core plugin
 new Patcher('internal')
     .instead(Object, 'defineProperty', (
-        [object, propertyKey, descriptor],
+        [obj, prop, descriptor],
         original,
         context
     ) => {
         if(descriptor.get && !descriptor.set) {
-            const value = {} as { current: any; };
+            descriptor.configurable = true;
+            let iv = descriptor.get.bind(obj);
 
-            const originalGetter = descriptor.get;
-            descriptor.get = () => value.current || originalGetter.bind(context).call(object);
-            descriptor.set = (v) => value.current = v;
+            // delete descriptor.get;
+            descriptor.get = iv;
+            descriptor.set = (v) => iv = v;
+            // descriptor.value = iv.bind(obj);
         }
 
-        return original(object, propertyKey, descriptor);
+        return original(obj, prop, descriptor);
     });
 
 export * as storage from './utils/storage';
