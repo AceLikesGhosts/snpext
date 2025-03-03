@@ -1,11 +1,38 @@
 import type { WebpackSearchOptions, WebpackModule, LazyCallback, WebpackFilter } from './types';
 import { moduleListeners } from './patching/listeners';
 import { Filters } from './Filters';
-import { cache } from './patching';
+import { cache, wreq } from './patching';
 import Logger from '@/utils/logger';
 import wait from '@/utils/wait';
+import type { AnyFunction } from '@/utils/patcher/PatcherTypes';
 
 const logger = Logger.new('webpack', 'searcher');
+
+export async function extract(id: string | number) {
+    const mod = wreq.m?.[id];
+    if(!mod) {
+        return null;
+    }
+
+    const code = `
+// extracted webpack mod ${ id }
+// - this is an extracted module, not the actual module
+//   breakpoints will not have an effect here
+
+export default ${ (mod as any)?.$original.toString() ?? mod.toString() }
+`;
+
+    const blob = new Blob([code], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+
+    const newMod: { default?: AnyFunction; } = await import(url)
+        .finally(() => {
+            URL.revokeObjectURL(url);
+        });
+
+    const blobbedMod = newMod?.default ?? (() => void 0);
+    return blobbedMod;
+}
 
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw?: false; all?: false; withKey?: false; }): T;
 export function getById<T>(id: string | number, options?: WebpackSearchOptions & { raw?: false; all: true; withKey?: false; }): T[];
@@ -34,7 +61,7 @@ function seperateOptionsAndValues<T, B>(...values: WithOptions<T, B>): [values: 
     const optionIdx = values.findIndex((v) => typeof v === 'object');
     if(optionIdx !== -1) {
         const options = values[optionIdx];
-        values.splice(optionIdx, 1)
+        values.splice(optionIdx, 1);
         return [values, options] as [values: T[], options: B];
     }
 
