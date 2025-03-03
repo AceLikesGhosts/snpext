@@ -14,16 +14,23 @@ const {
         verbose: isVerbose,
         watch: isWatch,
         dev: isDev,
-        lfor
+        lfor,
+        help
     }
 } = args;
 
-// let loggingEnabledFor: string | undefined = lfor;
-// if(isDev && loggingEnabledFor === undefined) {
-//     loggingEnabledFor = '[*]';
-// } else if(loggingEnabledFor !== undefined) {
-//     loggingEnabledFor = `[${ loggingEnabledFor?.split(/\s|,|,\s/) }]`;
-// }
+if(help) {
+    console.log('build - simple options');
+    console.log('');
+    
+    console.log('watch (w)   - Watches the files under /src/ and rebuilds upon change');
+    console.log('dev (d)     - Disables minifiying the output');
+    console.log('verbose (v) - Does nothing? TODO: remove');
+    console.log('lfor        - Enables or disables logging for specific Loggers');
+    console.log('(i.e. *,-settings would enable every logger minus settings)')
+
+    process.exit(0);
+}
 
 const loggingEnabledFor = lfor?.split(/\s|,/);
 

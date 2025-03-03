@@ -24,6 +24,11 @@ export const args = parseArgs({
         lfor: {
             type: 'string',
             default: '*'
+        },
+
+        help: {
+            type: 'boolean',
+            default: false
         }
     }
 });
