@@ -20,6 +20,19 @@ const PLUGIN_UNPATCHERS = new Map<
     UnpatcherFunction[]
 >();
 
+export function getPatchesFor<
+    O extends Record<PropertyKey, AnyFunction>,
+    K extends ObjectWithFunctions<O>,
+>(object: O, key?: K) {
+    const patches = OBJECT_PATCHES.get(object);
+
+    if(key) {
+        return patches?.patches.get(key);
+    }
+
+    return patches;
+}
+
 function replaceMethod<
     O extends Record<PropertyKey, AnyFunction>,
     K extends ObjectWithFunctions<O>,
