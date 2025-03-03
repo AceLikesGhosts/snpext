@@ -11,24 +11,23 @@ import { Patcher } from './utils/patcher/patcher';
 // for the settings core plugin
 new Patcher('internal')
     .instead(Object, 'defineProperty', (
-        [obj, prop, descriptor],
+        [object, propertyKey, descriptor],
         original,
         context
     ) => {
         if(descriptor.get && !descriptor.set) {
-            descriptor.configurable = true;
-            let iv = descriptor.get.bind(obj);
+            const value = {} as { current: any; };
 
-            // delete descriptor.get;
-            descriptor.get = iv;
-            descriptor.set = (v) => iv = v;
-            // descriptor.value = iv.bind(obj);
+            const originalGetter = descriptor.get;
+            descriptor.get = () => value.current || originalGetter.bind(context).call(object);
+            descriptor.set = (v) => value.current = v;
         }
 
-        return original(obj, prop, descriptor);
+        return original(object, propertyKey, descriptor);
     });
 
 export * as storage from './utils/storage';
 export * as plugins from './plugins/api';
 export * as webpack from './webpack/index';
 export * as store from './utils/reactiveStore/index';
+export * as patcher from './utils/patcher/patcher';
