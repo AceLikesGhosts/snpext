@@ -7,10 +7,11 @@ export const LOGGER_COLOURS = {
     debug: 'color: #ADD8E6;'
 };
 
+
 export default class Logger {
     public constructor(private readonly prefix: string = 'unknown') {
         if(
-            LFOR[`-${prefix}`] || !LFOR[prefix] || LFOR['*']
+            (LFOR[`-${ prefix }`] && !LFOR[prefix]) || !LFOR['*']
         ) {
             this.verbose = () => void 0;
         }
