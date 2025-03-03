@@ -22,12 +22,16 @@ const {
 if(help) {
     console.log('build - simple options');
     console.log('');
-    
+
     console.log('watch (w)   - Watches the files under /src/ and rebuilds upon change');
     console.log('dev (d)     - Disables minifiying the output');
     console.log('verbose (v) - Does nothing? TODO: remove');
     console.log('lfor        - Enables or disables logging for specific Loggers');
-    console.log('(i.e. *,-settings would enable every logger minus settings)')
+    console.log('(i.e. *,-settings would enable every logger minus settings)');
+
+    console.log('');
+    console.log('Recommended development arguments: bun scripts/build.ts -wdv --lfor="*,-settings"');
+    console.log('Recommended production arguments:  bun scripts/build.ts');
 
     process.exit(0);
 }
