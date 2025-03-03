@@ -1,5 +1,5 @@
 import type { WebpackInstance, WebpackModuleMap, WebpackRequire } from '../types';
-import type { AnyFunction } from '@/utils/patcher';
+import type { AnyFunction } from '@/utils/patcher/patcher';
 import { pluginPatches, waitForPatches } from '@/plugins/api/setupPlugins';
 import { allowForSelf, escapeStringSub } from './regexWrappers';
 import { moduleListeners } from './listeners';

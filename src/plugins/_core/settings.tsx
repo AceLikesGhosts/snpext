@@ -1,5 +1,5 @@
 import definePlugin from '@/utils/plugin';
-import { Patcher } from '@/utils/patcher';
+import { Patcher } from '@/utils/patcher/patcher';
 import { getByStrings } from '@/webpack';
 import { React } from '@/webpack/common/React';
 import CSSManager from '@/utils/css';

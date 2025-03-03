@@ -1,5 +1,5 @@
 import Logger from '@/utils/logger';
-import { Patcher } from '@/utils/patcher';
+import { Patcher } from '@/utils/patcher/patcher';
 import definePlugin from '@/utils/plugin';
 import { getByKeys, getByStrings, getModule } from '@/webpack';
 

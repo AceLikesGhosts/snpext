@@ -1,4 +1,4 @@
-import { Patcher } from './utils/patcher';
+import { Patcher } from './utils/patcher/patcher';
 import { set } from './utils/storage';
 
 Object.freeze(console); // FUCK YOU SNAPCHAT!
