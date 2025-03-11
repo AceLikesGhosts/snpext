@@ -1,61 +1,56 @@
+import { assertType } from '@/utils/assert';
 import Logger from '@/utils/logger';
 import { Patcher } from '@/utils/patcher/patcher';
 import definePlugin from '@/utils/plugin';
-import { getByKeys, getByStrings, getModule } from '@/webpack';
+import { getByKeys } from '@/webpack';
+
+type ConsoleWithPossibleSentry = {
+    [K in keyof Console]: Console[K] & { __sentry_original__?: any; }
+};
 
 declare const __SENTRY__: {
     globalEventProcessors: unknown[];
-    logger: {
-        disable(): void;
+    logger?: {
+        disable?(): void;
     },
+    hub?: {
+        // extra identifiable data
+        setExtras?(extras: {} | null): void;
+        // default PII
+        setUser?(user: {} | null): void;
+        // tracking tags
+        setTags(tags: {} | null): void;
+
+        endSession?(): void;
+
+        getClient?(): {
+            close(code: number): void;
+
+            autoSessionTracking: boolean;
+            enableTracing: boolean;
+            tracesSampleRate: number;
+        };
+        getScope?(): {
+            clear?(): void;
+            setFingerprint?(fingerprint: {} | null): void;
+        };
+    };
 };
 
-interface MetricCollector {
-
-}
-
-interface ActivityDetector {
-    destroy(): void;
-    getIsActive(): boolean;
-    getSecondsSinceLastActivity(): number;
-    onActivity(): unknown;
-    registerListeners(): void;
-    inactiveThresholdInSecond: number;
-    lastActivityTimestamp: number;
-}
-
-interface NetworkHandler {
-    sendRequest(): void;
-}
-
 interface AnalyticsModule {
-    metricCollector: MetricCollector;
-    activityDetector: ActivityDetector;
-    networkHandler: NetworkHandler;
+    activityDetector: {
+        destroy(): void;
+        getIsActive(): boolean;
+        getSecondsSinceLastActivity(): number;
+        onActivity(): unknown;
+        registerListeners(): void;
+        inactiveThresholdInSecond: number;
+        lastActivityTimestamp: number;
+    };
+    networkHandler: {
+        sendRequest(): void;
+    };
     increment(): void;
-}
-
-interface WindowSentry {
-    __SENTRY__: Sentry;
-}
-
-interface Sentry {
-    globalEventProccessors: (() => unknown)[];
-    hub: SentryHub;
-}
-
-interface SentryHub {
-    getClient(): SentryClient;
-}
-
-interface SentryClientOptions {
-    autoSessionTracking: boolean;
-    enableTracing: boolean;
-    tracesSampleRate: number;
-}
-
-interface SentryClient {
-    getOptions(): SentryClientOptions;
 }
 
 const patcher = Patcher.new('NoTrack');
@@ -109,18 +104,40 @@ export default definePlugin({
 
         activityMod?.activityDetector?.destroy();
 
-        const sentry = (
-            window as unknown as WindowSentry
-        )?.__SENTRY__;
+        const snapchatSentry = __SENTRY__;
 
-        if(!sentry) {
+        if(!snapchatSentry) {
             throw new Error('NoTrack ~ Failed to locate Sentry to disable it');
         }
 
-        const client = sentry.hub.getClient();
-        client.getOptions().autoSessionTracking = false;
-        client.getOptions().enableTracing = false;
-        client.getOptions().tracesSampleRate = 0;
+        __SENTRY__.globalEventProcessors.splice(0, __SENTRY__.globalEventProcessors.length);
+        __SENTRY__.logger?.disable?.();
+
+        const SENTRY_HUB = __SENTRY__.hub;
+        if(SENTRY_HUB) {
+            SENTRY_HUB.getClient?.()?.close?.(0);
+
+            const scope = SENTRY_HUB.getScope?.();
+            if(scope) {
+                scope?.clear?.();
+                scope?.setFingerprint?.(null);
+            }
+
+            SENTRY_HUB?.setUser?.(null);
+            SENTRY_HUB?.setTags?.(null);
+            SENTRY_HUB?.setExtras?.(null);
+
+            SENTRY_HUB?.endSession?.();
+        }
+
+        assertType<ConsoleWithPossibleSentry>(console);
+        for(const key in console) {
+            assertType<keyof Console>(key);
+
+            if(Object.hasOwn(console[key], '__sentry_original__')) {
+                console[key] = console[key].__sentry_original__;
+            }
+        }
     },
     stop() {
         logger.verbose('unpatching all');
