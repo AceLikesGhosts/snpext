@@ -1,9 +1,6 @@
 import { getPluginStatus, setPluginStatus } from '@/utils/storage';
 import { PluginStatus, type IPlugin } from '.';
 import plugins from '~plugins';
-import Logger from '@/utils/logger';
-
-const internalPluginHelperLogger = Logger.new('dev', 'plugin~helper');
 
 export function get(pluginName: string): IPlugin | null {
     return plugins[pluginName] || null;
@@ -21,7 +18,6 @@ export async function status(pluginName: string): Promise<PluginStatus | null> {
     }
 
     const currentStatus = await getPluginStatus(pluginName);
-    internalPluginHelperLogger.verbose(`${ pluginName } currentStatus ${ currentStatus ?? PluginStatus.DISABLED } (actual ${ currentStatus })`);
     return currentStatus ?? PluginStatus.DISABLED;
 }
 
