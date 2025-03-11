@@ -72,6 +72,32 @@ export default definePlugin({
                     replace: `$1return;`
                 }
             ]
+        },
+        {
+            find: /console\.log=\(\)=>{},/,
+            replacements: [
+                {
+                    find: /console\.log=\(\)=>{},/,
+                    replace: ''
+                },
+                {
+                    find: /console\.warn=\(\)=>{},/,
+                    replace: ''
+                },
+                {
+                    find: /console\.info=\(\)=>{},/,
+                    replace: ''
+                },
+
+                {
+                    find: /console\.debug=\(\)=>{},/,
+                    replace: ''
+                },
+                {
+                    find: /console\.error=\(\)=>{},/,
+                    replace: ''
+                }
+            ]
         }
     ],
     start() {
