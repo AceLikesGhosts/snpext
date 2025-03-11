@@ -413,7 +413,7 @@ export default definePlugin({
                     // sad
 
                     find: /(profileAndUpdateButtonContainer},void 0,)(([^\(]*\()([^\(]*))([^\)]*\))\(([^,]*),([^\)]*\))(\))/,
-                    replace: '$1$self.settingsButton({ original: $6 }) /* 1 is $1 2 is $2 3 is $3 4 is $4 5 is $5 6 is $6 7 is $7 8 is $8 */'
+                    replace: '$1$self.settingsButton({ original: $6 })'
                 }
             ]
         },
