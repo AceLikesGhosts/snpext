@@ -27,7 +27,7 @@ const MANIFEST = {
         {
             "matches": [
                 "*://web.snapchat.com/*",
-                "*://www.snapchat.com/web"
+                "https://www.snapchat.com/web/"
             ],
             "all_frames": true,
             "js": ["entry.js"],
