@@ -11,7 +11,7 @@ const SNAPCHAT_URLS = [
     "http://web.snapchat.com/*",
     "https://web.snapchat.com/*",
     "http://*.snapchat.com/*",
-    "https://*.snapchat.com/*"
+    "https://*.snapchat.com/*",
 ];
 
 const MANIFEST = {
@@ -22,7 +22,8 @@ const MANIFEST = {
     "content_scripts": [
         {
             "matches": [
-                "*://web.snapchat.com/*"
+                "*://web.snapchat.com/*",
+                "*://www.snapchat.com/web"
             ],
             "all_frames": true,
             "js": ["entry.js"],
@@ -39,10 +40,6 @@ const MANIFEST = {
         {
             "resources": ["*.map"],
             "matches": SNAPCHAT_URLS
-        },
-        {
-            "resources": ["settings.html"],
-            "matches": ["<all_urls>"]
         }
     ],
     "content_security_policy": {
