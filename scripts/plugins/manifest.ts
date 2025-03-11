@@ -6,6 +6,10 @@ import { mkdir } from 'fs/promises';
 
 type Manifest = ReturnType<typeof chrome.runtime.getManifest>;
 
+// NOTE: the alpha site of Snapchat web appears to be
+// redirecting to www.snapchat.com/web now
+// previously accessable at: https://web-alpha.snapchat.com/
+
 //#region manifest
 const SNAPCHAT_URLS = [
     "http://web.snapchat.com/*",
