@@ -16,7 +16,7 @@ export function insertCss(
     node.innerHTML = css;
     node.id = cssId;
     node.type = 'text/css';
-    document.head.appendChild(node);
+    document.documentElement.appendChild(node);
 }
 
 export function removeCss(owner: string) {
@@ -31,16 +31,35 @@ export function removeCss(owner: string) {
 }
 
 export default class CSSManager {
+    private cssCounter: number = 0;
     public static new(owner: string) {
         return new CSSManager(owner);
     }
 
     public constructor(private readonly owner: string) { }
     public insert(css: string) {
-        return insertCss(this.owner, css);
+        this.cssCounter++;
+        insertCss(`${ this.owner }-${ this.cssCounter }`, css);
+        return this.cssCounter;
     }
 
     public remove() {
-        return removeCss(this.owner);
+        for(let i: number = 0; i < this.cssCounter; i++) {
+            removeCss(`${ this.owner }-${ this.cssCounter }`);
+        }
+    }
+
+    public update(
+        index: number = 0,
+        css: string
+    ) {
+        const cssId = getCssId(`${ this.owner }-${ index }`.toLowerCase());
+        const node = document.getElementById(cssId);
+
+        if(node === null) {
+            throw new Error('Can not update inserted CSS for owner "' + cssId + '", failed to locate any css with that ID.');
+        }
+
+        node.innerHTML = css;
     }
 }
