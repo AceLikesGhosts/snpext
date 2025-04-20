@@ -31,3 +31,4 @@ export * as plugins from './plugins/api';
 export * as webpack from './webpack/index';
 export * as store from './utils/reactiveStore/index';
 export * as patcher from './utils/patcher/patcher';
+export * as reactiveStore from './utils/reactiveStore';
